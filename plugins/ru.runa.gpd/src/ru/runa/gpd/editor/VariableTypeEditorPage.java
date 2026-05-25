@@ -681,17 +681,24 @@ public class VariableTypeEditorPage extends EditorPartBase<VariableUserType> {
         protected void onSelection(SelectionEvent e) throws Exception {
             VariableUserType type = getSelection();
             Variable attribute = getAttributeSelection();
-            UpdateVariableNameDialog dialog = new UpdateVariableNameDialog(type, attribute);
+            UpdateVariableNameDialog dialog = new UpdateVariableNameDialog(type, attribute, true);
             int result = dialog.open();
             if (result != IDialogConstants.OK_ID) {
                 return;
             }
 
-            IResource projectRoot = editor.getDefinitionFile().getParent();
-            IDE.saveAllEditors(new IResource[] { projectRoot }, false);
-
             String newAttributeName = dialog.getName();
             String newAttributeScriptingName = dialog.getScriptingName();
+
+            if (newAttributeName.equals(attribute.getName())) {
+                attribute.setRedmineFieldName(dialog.getRedmineFieldName());
+                getDefinition().setDirty();
+                updateAttributeViewer(attribute);
+                return;
+            }
+
+            IResource projectRoot = editor.getDefinitionFile().getParent();
+            IDE.saveAllEditors(new IResource[] { projectRoot }, false);
             RenameUserTypeAttributeRefactoring refactoring = new RenameUserTypeAttributeRefactoring(editor.getDefinition(), type, attribute,
                     newAttributeName, newAttributeScriptingName);
             boolean useLtk = refactoring.isUserInteractionNeeded();
@@ -718,6 +725,7 @@ public class VariableTypeEditorPage extends EditorPartBase<VariableUserType> {
             }
             attribute.setName(newAttributeName);
             attribute.setScriptingName(newAttributeScriptingName);
+            attribute.setRedmineFieldName(dialog.getRedmineFieldName());
 
             getDefinition().setDirty();
             updateAttributeViewer(attribute);
@@ -983,6 +991,7 @@ public class VariableTypeEditorPage extends EditorPartBase<VariableUserType> {
                                 newVariable = new Variable(variable);
                                 newVariable.setName(dialog.getName());
                                 newVariable.setScriptingName(dialog.getScriptingName());
+                                newVariable.setRedmineFieldName(dialog.getRedmineFieldName());
                             }
                         }
 

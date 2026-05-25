@@ -32,6 +32,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
     private static final String EDITOR = "editor";
     private static final String GLOBAL = "global";
     private static final String REFERENCE_STORAGE = "referenceStorage";
+    private static final String REDMINE_FIELD_NAME = "redmineFieldName";
 
     @Override
     public boolean isSupportedForEmbeddedSubprocess() {
@@ -168,6 +169,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         variable.setDescription(description);
         variable.setStoreType(storeType);
         variable.setGlobal("true".equals(isGLobal));
+        variable.setRedmineFieldName(element.attributeValue(REDMINE_FIELD_NAME));
         return variable;
     }
 
@@ -229,6 +231,9 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         }
         if (!Strings.isNullOrEmpty(variable.getDefaultValue())) {
             element.addAttribute(DEFAULT_VALUE, variable.getDefaultValue());
+        }
+        if (!Strings.isNullOrEmpty(variable.getRedmineFieldName())) {
+            element.addAttribute(REDMINE_FIELD_NAME, variable.getRedmineFieldName());
         }
         if (variable instanceof Swimlane) {
             Swimlane swimlane = (Swimlane) variable;
