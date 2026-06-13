@@ -5,7 +5,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -205,6 +204,14 @@ public class InternalStorageOperationHandlerCellEditorProvider extends XmlBasedC
                 SwtUtils.createLabel(this, QueryType.SELECT.name());
                 constraintsModel.setQueryType(QueryType.SELECT);
                 model.setMode(FilesSupplierMode.BOTH);
+            } else if (isByReferenceUserType()) {
+                SwtUtils.createLabel(this, QueryType.DELETE.name());
+                if (constraintsModel.getQueryType() != QueryType.DELETE) {
+                    constraintsModel.setQueryString("");
+                    model.getInOutModel().outputVariable = null;
+                }
+                constraintsModel.setQueryType(QueryType.DELETE);
+                model.setMode(FilesSupplierMode.IN);
             } else {
                 addActionCombo(isUseExternalStorageIn, isUseExternalStorageOut);
             }
@@ -294,18 +301,15 @@ public class InternalStorageOperationHandlerCellEditorProvider extends XmlBasedC
             }
         }
 
+        private boolean isByReferenceUserType() {
+            VariableUserType userType = variableProvider.getUserType(constraintsModel.getSheetName());
+            return userType != null && userType.getReferenceStorage() != VariableStorageKind.NONE;
+        }
+
         private void addActionCombo(boolean isUseExternalStorageIn, boolean isUseExternalStorageOut) {
             final Combo combo = new Combo(this, SWT.READ_ONLY);
 
-            VariableUserType userType = variableProvider.getUserType(constraintsModel.getSheetName());
-
-            final List<QueryType> types;
-
-            if (userType != null && userType.getReferenceStorage() != VariableStorageKind.NONE) {
-                types = Arrays.asList(QueryType.SELECT, QueryType.DELETE);
-            } else {
-                types = QueryType.byIntent(isUseExternalStorageIn, isUseExternalStorageOut);
-            }
+            final List<QueryType> types = QueryType.byIntent(isUseExternalStorageIn, isUseExternalStorageOut);
 
             for (QueryType type : types) {
                 combo.add(type.name());

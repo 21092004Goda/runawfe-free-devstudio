@@ -132,9 +132,8 @@ public class VariableUserTypeDialog extends Dialog {
         final VariableUserType type = processDefinition.getVariableUserType(name);
         final boolean allowCreation = type == null && VariableFormatRegistry.getInstance().getArtifactByLabel(name) == null
                 && VariableNameChecker.isValid(name);
-        final boolean allowEdit = type != null && (!type.getName().equals(name)
-                || type.isStoreInExternalStorage() != isStoreInInternalStorage
-                || type.getReferenceStorage() != referenceStorage);
+        final boolean allowEdit = allowCreation || (type != null && (type.isStoreInExternalStorage() != isStoreInInternalStorage
+                || type.getReferenceStorage() != referenceStorage));
         getButton(IDialogConstants.OK_ID).setEnabled(createMode ? allowCreation : allowEdit);
     }
 
