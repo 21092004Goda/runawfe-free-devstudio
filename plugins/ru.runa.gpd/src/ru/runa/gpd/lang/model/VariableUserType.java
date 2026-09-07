@@ -194,6 +194,7 @@ public class VariableUserType extends EventSupport implements VariableContainer,
                     }
                 }
             }
+            firePropertyChange(PROPERTY_CHILDREN_CHANGED, null, attributes.get(0));
         }
 
         firePropertyChange(PropertyNames.PROPERTY_REFERENCE_STORAGE, old, next);
