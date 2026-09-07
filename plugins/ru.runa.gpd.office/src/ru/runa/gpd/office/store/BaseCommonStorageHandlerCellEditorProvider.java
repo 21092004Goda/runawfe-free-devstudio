@@ -147,14 +147,16 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                     new Label(this, SWT.NONE);
                 }
 
-                SwtUtils.createLink(this, Messages.getString("label.AddVar"), new LoggingHyperlinkAdapter() {
+                if (queryType != null) {
+	                SwtUtils.createLink(this, Messages.getString("label.AddVar"), new LoggingHyperlinkAdapter() {
 
-                    @Override
-                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                        model.constraints.add(new StorageConstraintsModel(StorageConstraintsModel.ATTR, queryType));
-                        buildFromModel();
-                    }
-                }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+	                    @Override
+	                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
+	                        model.constraints.add(new StorageConstraintsModel(StorageConstraintsModel.ATTR, queryType));
+	                        buildFromModel();
+	                    }
+	                }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+                }
                 new Label(this, SWT.NONE);
                 warning = new Label(this, SWT.NONE);
                 warning.setForeground(darkRed);
@@ -234,7 +236,7 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                 for (String variableName : delegable.getVariableNames(true, getTypeFilters())) {
                     combo.add(variableName);
                 }
-                combo.setText(cmodel.variableName);
+                combo.setText(cmodel.variableName != null ? cmodel.variableName : "");
                 combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
                 combo.addSelectionListener(new SelectionAdapter() {
                     @Override
